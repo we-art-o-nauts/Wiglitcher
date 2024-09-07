@@ -39,6 +39,21 @@ def get_todays_image():
     }
 
 
+base_url_random = 'https://commons.wikimedia.org/w/api.php?action=query&list=random&rnnamespace=6&format=json'
+base_url_image = 'https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&format=json'
+def get_random_images(count=2):
+    url = base_url_random + '&rnlimit=%d' % count
+    response = requests.get(url, headers=headers)
+    jsondata = json.loads(response.text)
+    imagelist = '|'.join(img['title'] for img in jsondata['query']['random'])
+
+    url2 = base_url_image + '&titles=' + imagelist + '&iilimit=50&iiprop=timestamp|user|url|size'
+    response2 = requests.get(url2, headers=headers)
+    imagedata = json.loads(response2.text)
+    
+    return [img[''] for img in Object.keys(imagedata['query']['pages'])]
+
+
 class Metadata(ft.View):
     """Wikimedia data page"""
 
@@ -47,6 +62,7 @@ class Metadata(ft.View):
         self.route = "/"
         self.page = page
         self.wiki_data = self.page.client_storage.get("wiki_data")
+        self.wiki_index = self.page.client_storage.get("wiki_index")
         self.controls = [ 
 
             ft.ListTile(
@@ -62,8 +78,10 @@ class Metadata(ft.View):
 
     def column(self, e):
         if self.wiki_data is None:
-            self.wiki_data = get_todays_image()
+            self.wiki_data = get_random_images()
+            #self.wiki_data = get_todays_image()
             self.page.client_storage.set('wiki_data', self.wiki_data)
+            self.page.client_storage.set('wiki_index', 0)
 
         return [
             ft.Image(
