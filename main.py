@@ -60,7 +60,7 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
-#buttons management
+#dialog management
     def handle_close(e):
         page.close(dlg_hot)
         #page.add(ft.Text(f"Hot dialog closed with action: {e.control.text}"))
@@ -72,7 +72,7 @@ def main(page: ft.Page):
         content=ft.Text("Do you want..."),
         actions=[
             ft.TextButton("help for using it with correct attribution?", on_click=handle_close),
-            ft.TextButton("describe the problem and improve it?", on_click=handle_close),
+            ft.TextButton("NEXT IMAGE", on_click=handle_close),
         ],
         actions_alignment=ft.MainAxisAlignment.END,
         on_dismiss=lambda e: page.add(
