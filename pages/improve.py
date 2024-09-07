@@ -1,5 +1,3 @@
-# Metadata page
-
 import flet as ft
 
 class Improve(ft.View):

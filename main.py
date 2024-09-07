@@ -2,7 +2,6 @@ import datetime
 import requests, json
 import flet as ft
 
-from pages.home import Home
 from pages.hotshot import Hotshot
 from pages.metadata import Metadata
 from pages.detect import Detect
@@ -17,10 +16,8 @@ def main(page: ft.Page):
     def route_change(route):
         page.views.clear()
 
-        page.views.append(ft.View("/", [ Home() ]))
+        page.views.append(Metadata(page))
 
-        if page.route == "/metadata":
-            page.views.append(Metadata())
         if page.route == "/hotshot":
             page.views.append(Hotshot())
         if page.route == "/detect":

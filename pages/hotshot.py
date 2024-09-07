@@ -1,12 +1,16 @@
-# Metadata page
-
 import flet as ft
 
 class Hotshot(ft.View):
+    """Hot shot views"""
+
     def __init__(self):
         super().__init__()
         self.route = "/hotshot"
-        self.controls = [ self.card(self) ]
+        self.controls = [ 
+            ft.AppBar(title=ft.Text("It's HOT!"), bgcolor=ft.colors.SURFACE_VARIANT),
+
+            self.card(self) 
+        ]
 
     def get_help(self):
         pass
@@ -30,7 +34,7 @@ class Hotshot(ft.View):
                                 ),
                                 ft.TextButton(
                                     "NEXT IMAGE", 
-                                    on_click=lambda _: self.page.go("/metadata")
+                                    on_click=lambda _: self.page.go("/")
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,

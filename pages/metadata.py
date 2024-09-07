@@ -42,27 +42,47 @@ def get_todays_image():
 class Metadata(ft.View):
     """Wikimedia data page"""
 
-    def __init__(self):
+    def __init__(self, page):
         super().__init__()
-        self.route = "/metadata"
+        self.route = "/"
+        self.page = page
+        self.wiki_data = self.page.client_storage.get("wiki_data")
         self.controls = [ 
-            ft.AppBar(title=ft.Text("Metadata"), bgcolor=ft.colors.SURFACE_VARIANT),
+
+            ft.ListTile(
+                leading=ft.Icon(ft.icons.ALBUM),
+                title=ft.Text("WikiGlitcher"),
+                subtitle=ft.Text(
+                    "GLAMhack 2024 ~ zHB Luzern"
+                ),
+            ),
 
             ft.Column(self.column(self)) 
         ]
+
     def column(self, e):
-        wiki_data = get_todays_image()
-        #print(wiki_data)
+        if self.wiki_data is None:
+            self.wiki_data = get_todays_image()
+            self.page.client_storage.set('wiki_data', self.wiki_data)
+
         return [
             ft.Image(
-                src=wiki_data['thumbnail_url'],
+                src=self.wiki_data['thumbnail_url'],
                 width=400,
                 height=300,
                 fit=ft.ImageFit.CONTAIN
             ),
 
-            ft.Text(wiki_data['description_text']),
+            ft.Text(self.wiki_data['description_text']),
 
-            ft.Text(f"Artist: " + wiki_data['artist_name']),
-            ft.Text(f"License: " + wiki_data['license_name']),
+            ft.Text(f"Artist: " + self.wiki_data['artist_name']),
+            ft.Text(f"License: " + self.wiki_data['license_name']),
+
+            ft.Row(
+                [
+                    ft.TextButton("Hot", on_click=lambda e: self.page.go("/hotshot")), 
+                    ft.TextButton("Not", on_click=lambda _: self.page.go("/detect"))
+                ],
+                #alignment=ft.MainAxisAlignment.CENTER,
+            ),
         ]

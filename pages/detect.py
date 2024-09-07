@@ -1,9 +1,10 @@
-# Metadata page
-
 import flet as ft
+
+
 
 class Detect(ft.View):
     """ Detection view """
+
     def __init__(self):
         super().__init__()
         self.route = "/detect"
@@ -56,10 +57,10 @@ def filepicker():
     return pick_files_dialog
 
 
-gd = ft.GestureDetector(
+gd1 = ft.GestureDetector(
     mouse_cursor=ft.MouseCursor.MOVE,
     drag_interval=50,
     on_pan_update=on_pan_update1,
 )
 
-c = ft.Container(gd, bgcolor=ft.colors.AMBER, width=50, height=50, left=0, top=0)
+c = ft.Container(gd1, bgcolor=ft.colors.AMBER, width=50, height=50, left=0, top=0)
