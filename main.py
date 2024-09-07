@@ -1,89 +1,53 @@
+import datetime
+import requests, json
 import flet as ft
 
+from pages import detect, improve, metadata
+
+from dotenv import load_dotenv
+from os import environ
+
+load_dotenv()
+
+today = datetime.datetime.now()
+date = today.strftime('%Y/%m/%d')
+language_code = 'en'
+
+base_url = 'https://api.wikimedia.org/feed/v1/wikipedia/'
+headers = {
+  'Authorization': 'Bearer ' + environ.get('WIKIMEDIA_TOKEN'),
+  'User-Agent': 'Wiglitcher (https://github.com/snappy91/Wiglitcher/issues)'
+}
+
+def get_todays_image():
+    url = base_url + language_code + '/featured/' + date
+    response = requests.get(url, headers=headers)
+    jsondata = json.loads(response.text)
+    if not 'image' in jsondata:
+        print(jsondata)
+        return None
+    return {
+        'thumbnail_url': jsondata['image']['thumbnail']['source'],
+        'description_html': jsondata['image']['description']['html'],
+        'artist_name': jsondata['image']['artist']['text'],
+        'attribution_url': jsondata['image']['file_page'],
+        'license_name': jsondata['image']['license']['type'],
+        'license_url': jsondata['image']['license']['url'],
+    }
 
 def main(page: ft.Page):
-    page.title = "Wiglitcher"
+    page.title = "⋆ ◎ ✾ WIGLITCHER ✾ ◎ ⋆"
+    page.bgcolor = ft.colors.TRANSPARENT
+    page.adaptive = True
 
     def route_change(route):
         page.views.clear()
-        page.views.append(
-            ft.View(
-                "/",
-                [
-                    ft.Card(
-                        content=ft.Container(
-                            content=ft.Column(
-                                [#main page
-                                    ft.ListTile(
-                                        leading=ft.Icon(ft.icons.ALBUM),
-                                        title=ft.Text("WikiGlitcher"),
-                                        subtitle=ft.Text(
-                                            "..."
-                                        ),
-                                    ),
-
-                                    ft.Image(src=f"C:\\first-flet-app\\TEST1\\images\\1.png",
-                                    width=400,
-                                    height=400,
-                                    fit=ft.ImageFit.CONTAIN
-                                    ),
-                                    
-                                    ft.Row(
-                                        [ft.TextButton("METADATA", on_click=lambda _: page.go("/metadata"))],
-                                        alignment=ft.MainAxisAlignment.CENTER,
-                                    ),
-
-                                    
-                                    ft.Row(
-                                        [ft.TextButton("Hot", on_click=lambda e: page.open(dlg_hot)), ft.TextButton("Not", on_click=lambda _: page.go("/detect"))],
-                                        alignment=ft.MainAxisAlignment.CENTER,
-                                    ),
-
-                                    ft.Text(f"URL: "),
-
-                                ]
-                            ),
-                            width=400,
-                            padding=10,
-                        )
-                    )
-                ],
-            )
-        )
+        page.views.append(pages.metadata.view())
         if page.route == "/metadata":
-            page.views.append(
-                ft.View(
-                    "/metadata",
-                    [#metadata page
-                        ft.AppBar(title=ft.Text("Metadata"), bgcolor=ft.colors.SURFACE_VARIANT),
-                        #ft.ElevatedButton("Go Home", on_click=lambda _: page.go("/")),
-
-                        ft.Text(f"Metadata:"),
-                        ft.Text(f"Name:"),
-                        ft.Text(f"Description:"),
-                        ft.Text(f"Date:"),
-                        ft.Text(f"Author:"),
-                        ft.Text(f"Author first edit:"),
-                        ft.Text(f"Author edit count:"),
-
-
-                    ],
-                )
-            )
+            page.views.append(pages.mm.view())
         if page.route == "/detect":
-            page.views.append(
-                ft.View(
-                    "/detect",
-                    [#detect page
-                        ft.AppBar(title=ft.Text("Detect"), bgcolor=ft.colors.SURFACE_VARIANT),
-                        #ft.ElevatedButton("Go Home", on_click=lambda _: page.go("/")),
-
-                        ft.Text(f"Spot the suspect:"),
-
-
-                    ],
-                )
-            )    
+            page.views.append(pages.detect.view())
+            
         page.update()
 
     def view_pop(view):
@@ -118,17 +82,4 @@ def main(page: ft.Page):
 
 
 
-
-
-ft.app(main, view=ft.AppView.WEB_BROWSER)
-
-
-
-
-
-
-
-
-
-
-
+ft.app(target=main) #, view=ft.AppView.WEB_BROWSER)
