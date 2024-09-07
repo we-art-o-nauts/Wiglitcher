@@ -2,7 +2,55 @@ import flet as ft
 
 
 def main(page: ft.Page):
-    page.title = "Wiglitcher"
+    page.title = "Wiglitcher2"
+
+
+    #gesture
+    def on_pan_update1(e: ft.DragUpdateEvent):
+        c.top = max(0, c.top + e.delta_y)
+        c.left = max(0, c.left + e.delta_x)
+        c.update()
+
+    def on_pan_update2(e: ft.DragUpdateEvent):
+        e.control.top = max(0, e.control.top + e.delta_y)
+        e.control.left = max(0, e.control.left + e.delta_x)
+        e.control.update()
+
+    gd = ft.GestureDetector(
+        mouse_cursor=ft.MouseCursor.MOVE,
+        drag_interval=50,
+        on_pan_update=on_pan_update1,
+    )
+
+    c = ft.Container(gd, bgcolor=ft.colors.AMBER, width=50, height=50, left=0, top=0)
+
+    gd1 = ft.GestureDetector(
+        mouse_cursor=ft.MouseCursor.MOVE,
+        drag_interval=10,
+        on_vertical_drag_update=on_pan_update2,
+        left=100,
+        top=100,
+        content=ft.Container(bgcolor=ft.colors.BLUE, width=50, height=50),
+    )
+        
+    #
+
+    #filepicker
+    def pick_files_result(e: ft.FilePickerResultEvent):
+        selected_files.value = (
+            ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
+        )
+        selected_files.update()
+
+    pick_files_dialog = ft.FilePicker(on_result=pick_files_result)
+    selected_files = ft.Text()
+
+    page.overlay.append(pick_files_dialog)
+    #
+
+
+    #VIEWS
+
 
     def route_change(route):
         page.views.clear()
@@ -54,7 +102,7 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     "/metadata",
-                    [#metadata page
+                    [#METADATA VIEW
                         ft.AppBar(title=ft.Text("Metadata"), bgcolor=ft.colors.SURFACE_VARIANT),
                         #ft.ElevatedButton("Go Home", on_click=lambda _: page.go("/")),
 
@@ -74,16 +122,43 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     "/detect",
-                    [#detect page
+                    [#DETECT VIEW
                         ft.AppBar(title=ft.Text("Detect"), bgcolor=ft.colors.SURFACE_VARIANT),
                         #ft.ElevatedButton("Go Home", on_click=lambda _: page.go("/")),
 
                         ft.Text(f"Spot the suspect:"),
 
+                        ft.Stack([c, gd1], width=1000, height=400),
+
+                        #ft.Text(f"Position: {control.top}"),
+
+                        ft.TextField(label="Describe the problem"),
+
+                        ft.TextButton("CONTINUE", on_click=lambda _: page.go("/improve"))
+                    ],
+                )
+            )
+
+        if page.route == "/improve":
+            page.views.append(
+                ft.View(
+                    "/improve",
+                    [#IMPROVE VIEW
+                        ft.AppBar(title=ft.Text("Improve"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        #ft.ElevatedButton("Go Home", on_click=lambda _: page.go("/")),
+
+                        ft.Text(f"Improve by AI: LINK"),
+
+                        ft.Text(f"Improve text clarity: LINK"),
+
+                        ft.Text(f"Improve by Cropping a detail: LINK"),
+
+                        ft.ElevatedButton("Pick files", icon=ft.icons.UPLOAD_FILE, on_click=lambda _: pick_files_dialog.pick_files(allow_multiple=True)),
 
                     ],
                 )
-            )    
+            )
+            
         page.update()
 
     def view_pop(view):
@@ -96,7 +171,7 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
-#buttons management
+#dialog management
     def handle_close(e):
         page.close(dlg_hot)
         #page.add(ft.Text(f"Hot dialog closed with action: {e.control.text}"))
@@ -108,7 +183,7 @@ def main(page: ft.Page):
         content=ft.Text("Do you want..."),
         actions=[
             ft.TextButton("help for using it with correct attribution?", on_click=handle_close),
-            ft.TextButton("describe the problem and improve it?", on_click=handle_close),
+            ft.TextButton("NEXT IMAGE", on_click=handle_close),
         ],
         actions_alignment=ft.MainAxisAlignment.END,
         on_dismiss=lambda e: page.add(
