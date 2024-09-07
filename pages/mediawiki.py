@@ -45,11 +45,21 @@ def get_random_images(count=2):
     jsondata = json.loads(response.text)
     imagelist = '|'.join(img['title'] for img in jsondata['query']['random'])
 
-    url2 = base_url_image + '&titles=' + imagelist + '&iilimit=50&iiprop=timestamp|user|url|size|thumbnailurl'
+    url2 = base_url_image + '&titles=' + imagelist + '&iilimit=50'
     response2 = requests.get(url2, headers=headers)
     imagedata = json.loads(response2.text)
-    print(imagedata)
+    #print(imagedata)
 
     idqp = imagedata['query']['pages']
-    return [idqp[img]['imageinfo'] for img in idqp.keys()]
+    imagedata = [idqp[img]['imageinfo'] for img in idqp.keys()]
+    return [{
+        'thumbnail_url': img['url'],
+        'image_width': img['width'],
+        'image_height': img['height'],
+        'description_text': img['descriptionurl'],
+        'artist_name': img['user'],
+        'attribution_url': img['descriptionshorturl'],
+        'license_name': '?',
+        'license_url': '?',
+    } for img in imagedata ]
 

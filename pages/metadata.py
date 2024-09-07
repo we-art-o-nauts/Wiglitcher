@@ -2,7 +2,7 @@
 
 import flet as ft
 
-from mediawiki import *
+from .mediawiki import *
 
 
 class Metadata(ft.View):
@@ -28,24 +28,27 @@ class Metadata(ft.View):
         ]
 
     def column(self, e):
-        if self.wiki_data is None:
+        if self.wiki_data is None or self.wiki_index is None:
             #self.wiki_data = get_random_images()
-            self.wiki_data = get_todays_image()
+            self.wiki_data = [ get_todays_image() ]
             self.page.client_storage.set('wiki_data', self.wiki_data)
             self.page.client_storage.set('wiki_index', 0)
 
+        idx = self.page.client_storage.get('wiki_index')
+        self.page.client_storage.set('wiki_index', idx + 1)
+        if idx > len(self.wiki_data):
+            idx = 0
         return [
             ft.Image(
-                src=self.wiki_data['thumbnail_url'],
+                src=self.wiki_data[idx]['thumbnail_url'],
                 width=400,
                 height=300,
                 fit=ft.ImageFit.CONTAIN
             ),
 
-            ft.Text(self.wiki_data['description_text']),
-
-            ft.Text(f"Artist: " + self.wiki_data['artist_name']),
-            ft.Text(f"License: " + self.wiki_data['license_name']),
+            ft.Text(self.wiki_data[idx]['description_text']),
+            ft.Text(f"Artist: " + self.wiki_data[idx]['artist_name']),
+            ft.Text(f"License: " + self.wiki_data[idx]['license_name']),
 
             ft.Row(
                 [
