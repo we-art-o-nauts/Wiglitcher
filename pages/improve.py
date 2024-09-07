@@ -2,7 +2,7 @@
 
 import flet as ft
 
-def view():
+def view(page):
 	return ft.View(
         "/improve",
         [#IMPROVE VIEW
