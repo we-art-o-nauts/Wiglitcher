@@ -39,24 +39,24 @@ def get_todays_image():
 
 base_url_random = 'https://commons.wikimedia.org/w/api.php?action=query&list=random&rnnamespace=6&format=json'
 base_url_image = 'https://commons.wikimedia.org/w/api.php?action=query&prop=imageinfo&format=json'
-def get_random_images(count=2):
+def get_random_images(count=1):
     url = base_url_random + '&rnlimit=%d' % count
     response = requests.get(url, headers=headers)
     jsondata = json.loads(response.text)
     imagelist = '|'.join(img['title'] for img in jsondata['query']['random'])
 
-    url2 = base_url_image + '&titles=' + imagelist + '&iilimit=50'
+    url2 = base_url_image + '&titles=' + imagelist + '&iilimit=50&iiprop=timestamp|user|url|size|thumbnail'
     response2 = requests.get(url2, headers=headers)
     imagedata = json.loads(response2.text)
-    #print(imagedata)
 
     idqp = imagedata['query']['pages']
-    imagedata = [idqp[img]['imageinfo'] for img in idqp.keys()]
+    imagedata = [ idqp[img]['imageinfo'] for img in idqp.keys() ][0]
+    #print(imagedata)
     return [{
         'thumbnail_url': img['url'],
         'image_width': img['width'],
         'image_height': img['height'],
-        'description_text': img['descriptionurl'],
+        'description_text': img['descriptionurl'].replace('https://commons.wikimedia.org/wiki/File:', '').replace('_', ' '),
         'artist_name': img['user'],
         'attribution_url': img['descriptionshorturl'],
         'license_name': '?',

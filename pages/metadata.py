@@ -28,15 +28,16 @@ class Metadata(ft.View):
         ]
 
     def column(self, e):
-        if self.wiki_data is None or self.wiki_index is None:
-            #self.wiki_data = get_random_images()
-            self.wiki_data = [ get_todays_image() ]
+        if not self.wiki_data:
+            print("Loading fresh data ...")
+            self.wiki_data = get_random_images(10)
+            #self.wiki_data = [ get_todays_image() ]
             self.page.client_storage.set('wiki_data', self.wiki_data)
             self.page.client_storage.set('wiki_index', 0)
 
         idx = self.page.client_storage.get('wiki_index')
         self.page.client_storage.set('wiki_index', idx + 1)
-        if idx > len(self.wiki_data):
+        if idx == len(self.wiki_data):
             idx = 0
         return [
             ft.Image(

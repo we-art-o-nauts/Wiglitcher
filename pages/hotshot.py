@@ -13,11 +13,14 @@ class Hotshot(ft.View):
         ]
 
     def get_help(self):
-        pass
-        #self.page.launch_url(
-        #    'https://commons.wikimedia.org/wiki/Commons:Simple_media_reuse_guide',
-        #    web_window_name=ft.UrlTarget.BLANK
-        #)
+        self.page.launch_url(
+            'https://commons.wikimedia.org/wiki/Commons:Simple_media_reuse_guide',
+            #web_window_name=ft.UrlTarget.BLANK
+        )
+
+    def next_image(self):
+        #self.page.client_storage.set('wiki_data', False)
+        self.page.go("/")
 
     def card(self, e):
         return ft.Card(
@@ -30,11 +33,11 @@ class Hotshot(ft.View):
                             [
                                 ft.OutlinedButton(
                                     "Help me to use it correctly",
-                                    on_click=self.get_help()
+                                    on_click=lambda _: self.get_help()
                                 ),
                                 ft.TextButton(
                                     "NEXT IMAGE", 
-                                    on_click=lambda _: self.page.go("/")
+                                    on_click=lambda _: self.next_image()
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,

@@ -44,18 +44,6 @@ def gesture():
         content=ft.Container(bgcolor=ft.colors.BLUE, width=50, height=50),
     )
 
-def pick_files_result(e: ft.FilePickerResultEvent):
-    selected_files.value = (
-        ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
-    )
-    selected_files.update()
-
-def filepicker():
-    pick_files_dialog = ft.FilePicker(on_result=pick_files_result)
-    selected_files = ft.Text()
-
-    return pick_files_dialog
-
 
 gd1 = ft.GestureDetector(
     mouse_cursor=ft.MouseCursor.MOVE,
