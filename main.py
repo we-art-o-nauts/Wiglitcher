@@ -4,7 +4,9 @@ import flet as ft
 
 from pages.home import Home
 from pages.hotshot import Hotshot
-from pages import metadata, improve, detect
+from pages.metadata import Metadata
+from pages.detect import Detect
+from pages.improve import Improve
 
 
 def main(page: ft.Page):
@@ -14,13 +16,17 @@ def main(page: ft.Page):
 
     def route_change(route):
         page.views.clear()
+
         page.views.append(ft.View("/", [ Home() ]))
-        if page.route == "/hotshot":
-            page.views.append(ft.View("/hotshot", [ Hotshot() ]))
+
         if page.route == "/metadata":
-            page.views.append(metadata.view(page))
+            page.views.append(Metadata())
+        if page.route == "/hotshot":
+            page.views.append(Hotshot())
         if page.route == "/detect":
-            page.views.append(detect.view(page))
+            page.views.append(Detect())
+        if page.route == "/improve":
+            page.views.append(Improve())
             
         page.update()
 

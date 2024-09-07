@@ -2,10 +2,13 @@
 
 import flet as ft
 
-def view(page):
-	return ft.View(
-        "/detect",
-        [#DETECT VIEW
+class Detect(ft.View):
+    """ Detection view """
+    def __init__(self):
+        super().__init__()
+        self.route = "/detect"
+        self.controls = [ 
+
             ft.AppBar(title=ft.Text("Detect"), bgcolor=ft.colors.SURFACE_VARIANT),
             #ft.ElevatedButton("Go Home", on_click=lambda _: page.go("/")),
 
@@ -17,9 +20,8 @@ def view(page):
 
             ft.TextField(label="Describe the problem"),
 
-            ft.TextButton("CONTINUE", on_click=lambda _: page.go("/improve"))
-        ],
-    )
+            ft.TextButton("CONTINUE", on_click=lambda _: self.page.go("/improve"))
+        ]
 
 def on_pan_update1(e: ft.DragUpdateEvent):
     c.top = max(0, c.top + e.delta_y)
@@ -32,15 +34,7 @@ def on_pan_update2(e: ft.DragUpdateEvent):
     e.control.update()
 
 def gesture():
-    gd = ft.GestureDetector(
-        mouse_cursor=ft.MouseCursor.MOVE,
-        drag_interval=50,
-        on_pan_update=on_pan_update1,
-    )
-
-    c = ft.Container(gd, bgcolor=ft.colors.AMBER, width=50, height=50, left=0, top=0)
-
-    gd1 = ft.GestureDetector(
+	return ft.GestureDetector(
         mouse_cursor=ft.MouseCursor.MOVE,
         drag_interval=10,
         on_vertical_drag_update=on_pan_update2,
@@ -60,3 +54,12 @@ def filepicker():
     selected_files = ft.Text()
 
     return pick_files_dialog
+
+
+gd = ft.GestureDetector(
+    mouse_cursor=ft.MouseCursor.MOVE,
+    drag_interval=50,
+    on_pan_update=on_pan_update1,
+)
+
+c = ft.Container(gd, bgcolor=ft.colors.AMBER, width=50, height=50, left=0, top=0)
